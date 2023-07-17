@@ -2,6 +2,7 @@ import random
 import pygame
 import sys
 from pygame.math import Vector2
+import sql
 
 
 class SNAKE:
@@ -53,6 +54,8 @@ class MAIN:
         self.fruit = FRUIT()
         self.dead = False
         self.score = 0
+        self.running = True
+        self.high_score = 0
 
     def update(self):
         self.snake.move_snake()
@@ -60,28 +63,62 @@ class MAIN:
         self.check_fail()
 
     def draw_elements(self):
-        self.snake.draw_snake()
-        self.fruit.draw_fruit()
+        if self.running:
+            self.snake.draw_snake()
+            self.fruit.draw_fruit()
+            font = pygame.font.SysFont(None, 24)
+            score = font.render("Score " + str(self.score), True, (255, 255, 255))
+            screen.blit(score, (10, 10))
+        else:
+            font = pygame.font.SysFont(None, 36)
+            final_score = font.render("Final score:" + str(self.score) + " High Score:"+str(self.high_score), True, (255, 255, 255))
+            x, y = screen.get_size()
+            center = (
+                (x - final_score.get_width()) / 2,
+                (y - final_score.get_height()) / 2
+            )
+            screen.blit(final_score, center)
+            restart_text = font.render("Restart", True, (255, 255, 255))
+            center = (
+                (x - restart_text.get_width()) / 2,
+                ((y - restart_text.get_height()) / 2) + final_score.get_height() + 20
+            )
+            rect = pygame.Rect(center[0] - 5, center[1] - 5, restart_text.get_width() + 10,
+                               restart_text.get_height() + 10)
+            global restart_button
+            a, b = pygame.mouse.get_pos()
+            if rect.x <= a <= rect.x + rect.width and rect.y <= b <= rect.y + rect.height:
+                color = (180, 180, 180)
+            else:
+                color = (110, 110, 110)
+            restart_button = pygame.draw.rect(screen, color, rect)
+            screen.blit(restart_text, center)
 
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
-            self.fruit.random_pos()
+            collision = True
+            while collision:
+                collision = False
+                self.fruit.random_pos()
+                for teil in self.snake.body:
+                    if teil == self.fruit.pos:
+                        collision = True
             self.snake.add_block()
             self.score += 1
 
     def check_fail(self):
         if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
             self.game_over()
-
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
-                print("Self Crash")
                 self.game_over()
 
     def game_over(self):
-        print("Score:", self.score)
-        pygame.quit()
-        sys.exit()
+        if self.running:
+            print("Game over")
+            self.running = False
+            sql.insert_score(name, "Snake", self.score)
+            self.high_score = sql.get_score(name, "Snake")
 
 
 pygame.init()
@@ -94,19 +131,24 @@ SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, 150)
 
 main_game = MAIN()
+restart = False
 
 
 def handle_keys(key):
-    if key == pygame.K_w:
+    if key == pygame.K_w and not main_game.snake.direction == Vector2(0, 1):
         main_game.snake.direction = Vector2(0, -1)
-    if key == pygame.K_s:
+    if key == pygame.K_s and not main_game.snake.direction == Vector2(0, -1):
         main_game.snake.direction = Vector2(0, 1)
-    if key == pygame.K_a:
+    if key == pygame.K_a and not main_game.snake.direction == Vector2(1, 0):
         main_game.snake.direction = Vector2(-1, 0)
-    if key == pygame.K_d:
+    if key == pygame.K_d and not main_game.snake.direction == Vector2(-1, 0):
         main_game.snake.direction = Vector2(1, 0)
     if key == pygame.K_f:
-        main_game.snake.direction = Vector2(0, 0)
+        global restart
+        restart = True
+
+
+restart_button = None
 
 
 def handle_events(event):
@@ -117,10 +159,27 @@ def handle_events(event):
         main_game.update()
     if event.type == pygame.KEYDOWN:
         handle_keys(event.key)
+    if event.type == pygame.MOUSEBUTTONUP:
+        if restart_button is not None:
+            if restart_button.collidepoint(event.pos):
+                global restart
+                restart = True
 
 
-def game_loop():
+name = ""
+
+
+def game_loop(username):
     while True:
+        global main_game
+        global restart
+        global name
+        name = username
+        if restart:
+            main_game = MAIN()
+            restart = False
+            global restart_button
+            restart_button = None
         for event in pygame.event.get():
             handle_events(event)
 
@@ -128,7 +187,3 @@ def game_loop():
         main_game.draw_elements()
         pygame.display.update()
         # Limit FPS: clock.tick(60)
-
-
-if __name__ == '__main__':
-    game_loop()
