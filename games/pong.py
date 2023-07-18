@@ -120,8 +120,7 @@ def handle_keys():
 
 def gameloop():
     global bot
-    if input("Willst du mit Bot spielen?") == "ja":
-        bot = True
+    bot = True
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

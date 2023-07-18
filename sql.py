@@ -3,7 +3,7 @@ import sqlite3
 
 class SQL:
     def __init__(self):
-        self._conn = sqlite3.connect("data/database.db", isolation_level=None)
+        self._conn = sqlite3.connect("database.db", isolation_level=None)
         self.c = self._conn.cursor()
 
         self.c.execute("""

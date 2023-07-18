@@ -7,8 +7,6 @@ sql = SQL()
 
 benutzer = ""
 
-sql.register("hurensohn", "sadfsef", "fsdafedasf")
-
 
 def wahl(message, optionen):
     msg = message + " "
