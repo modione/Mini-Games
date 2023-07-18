@@ -63,7 +63,7 @@ def game_wahl():
         elif spiel == "4 Gewinnt":
             import games.viergewinnt
         elif spiel == "Panzer Spiel":
-            import Panzerfaust.panzer
+            import Panzerfaust.panzerfaustschlacht
         elif spiel == "Beenden":
             playing = False
 
