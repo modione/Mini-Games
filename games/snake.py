@@ -2,6 +2,7 @@ import random
 
 import pygame
 from pygame.math import Vector2
+import launcher
 
 from sql import SQL
 
@@ -189,4 +190,6 @@ def game_loop(username):
 
 
 if __name__ == '__main__':
-    game_loop("test")
+    launcher.einloggen()
+    launcher.sql.close_conn()
+    game_loop(launcher.benutzer)

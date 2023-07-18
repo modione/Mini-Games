@@ -53,7 +53,7 @@ def einloggen():
 def game_wahl():
     playing = True
     while playing:
-        spiel = wahl("Wähle Spiel aus: ", ("Snake", "4 Gewinnt", "Panzer Spiel", "Beenden"))
+        spiel = wahl("Wähle Spiel aus: ", ("Snake", "4 Gewinnt", "Pong", "Panzer Spiel", "Beenden"))
         if spiel == "Snake":
             import games.snake as snake
 
@@ -62,6 +62,8 @@ def game_wahl():
             os.system()
         elif spiel == "4 Gewinnt":
             import games.viergewinnt
+        elif spiel == "Pong":
+            import games.pong
         elif spiel == "Panzer Spiel":
             import Panzerfaust.Panzerfaustschlacht
         elif spiel == "Beenden":
