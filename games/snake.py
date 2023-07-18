@@ -1,8 +1,9 @@
 import random
+
 import pygame
-import sys
 from pygame.math import Vector2
-import sql
+
+from sql import SQL
 
 
 class SNAKE:
@@ -11,7 +12,7 @@ class SNAKE:
         self.direction = Vector2(1, 0)
         self.new_block = False
 
-    def draw_snake(self):
+    def draw(self):
         for block in self.body:
             block_rect = pygame.Rect(block.x * cell_size, block.y * cell_size, cell_size, cell_size)
             if self.body.index(block) == 0:
@@ -19,7 +20,7 @@ class SNAKE:
             else:
                 pygame.draw.rect(screen, (255, 0, 0), block_rect)
 
-    def move_snake(self):
+    def move(self):
         if self.new_block:
             body_copy = self.body[:]
             body_copy.insert(0, body_copy[0] + self.direction)
@@ -38,7 +39,7 @@ class FRUIT:
     def __init__(self):
         self.random_pos()
 
-    def draw_fruit(self):
+    def draw(self):
         fruit_rect = pygame.Rect(self.pos.x * cell_size, self.pos.y * cell_size, cell_size, cell_size)
         pygame.draw.rect(screen, (126, 166, 114), fruit_rect)
 
@@ -58,20 +59,21 @@ class MAIN:
         self.high_score = 0
 
     def update(self):
-        self.snake.move_snake()
-        self.check_collision()
-        self.check_fail()
+        self.snake.move()
+        self.collisions()
+        self.check_tod()
 
-    def draw_elements(self):
+    def draw(self):
         if self.running:
-            self.snake.draw_snake()
-            self.fruit.draw_fruit()
+            self.snake.draw()
+            self.fruit.draw()
             font = pygame.font.SysFont(None, 24)
             score = font.render("Score " + str(self.score), True, (255, 255, 255))
             screen.blit(score, (10, 10))
         else:
             font = pygame.font.SysFont(None, 36)
-            final_score = font.render("Final score:" + str(self.score) + " High Score:"+str(self.high_score), True, (255, 255, 255))
+            final_score = font.render("Final score:" + str(self.score) + " High Score:" + str(self.high_score), True,
+                                      (255, 255, 255))
             x, y = screen.get_size()
             center = (
                 (x - final_score.get_width()) / 2,
@@ -94,7 +96,7 @@ class MAIN:
             restart_button = pygame.draw.rect(screen, color, rect)
             screen.blit(restart_text, center)
 
-    def check_collision(self):
+    def collisions(self):
         if self.fruit.pos == self.snake.body[0]:
             collision = True
             while collision:
@@ -106,7 +108,7 @@ class MAIN:
             self.snake.add_block()
             self.score += 1
 
-    def check_fail(self):
+    def check_tod(self):
         if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
             self.game_over()
         for block in self.snake.body[1:]:
@@ -117,8 +119,10 @@ class MAIN:
         if self.running:
             print("Game over")
             self.running = False
+            sql = SQL()
             sql.insert_score(name, "Snake", self.score)
             self.high_score = sql.get_score(name, "Snake")
+            sql.close_conn()
 
 
 pygame.init()
@@ -132,6 +136,8 @@ pygame.time.set_timer(SCREEN_UPDATE, 150)
 
 main_game = MAIN()
 restart = False
+name = ""
+restart_button = None
 
 
 def handle_keys(key):
@@ -148,9 +154,6 @@ def handle_keys(key):
         restart = True
 
 
-restart_button = None
-
-
 def handle_events(event):
     if event.type == pygame.QUIT:
         pygame.quit()
@@ -163,9 +166,6 @@ def handle_events(event):
             if restart_button.collidepoint(event.pos):
                 global restart
                 restart = True
-
-
-name = ""
 
 
 def game_loop(username):
@@ -183,6 +183,10 @@ def game_loop(username):
             handle_events(event)
 
         screen.fill((175, 215, 70))
-        main_game.draw_elements()
+        main_game.draw()
         pygame.display.update()
         # Limit FPS: clock.tick(60)
+
+
+if __name__ == '__main__':
+    game_loop("test")
