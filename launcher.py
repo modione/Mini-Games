@@ -52,7 +52,7 @@ while playing:
     if spiel == "Snake":
         import games.snake as snake
         thread = threading.Thread(target=snake.game_loop(benutzer))
-        thread.start()
+        thread.run()
     elif spiel == "4 Gewinnt":
         import games.viergewinnt
     elif spiel == "Panzer Spiel":

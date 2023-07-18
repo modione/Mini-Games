@@ -154,7 +154,6 @@ restart_button = None
 def handle_events(event):
     if event.type == pygame.QUIT:
         pygame.quit()
-        sys.exit()
     if event.type == SCREEN_UPDATE:
         main_game.update()
     if event.type == pygame.KEYDOWN:

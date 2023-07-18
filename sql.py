@@ -24,7 +24,10 @@ FOREIGN KEY (name)
 
 def login(name, password):
     pswd = c.execute("SELECT password from users WHERE name=?", (name,)).fetchone()
-    return pswd[0] == password
+    try:
+        return pswd[0] == password
+    except TypeError:
+        return False
 
 
 def register(name, email, password):
