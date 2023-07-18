@@ -15,10 +15,14 @@ red = (255,0,0)
 green = (0,255,0)
 blue = (0,0,255)
 tankcolor = (13.7,16.9,0)
+if  not __name__ == "__main__":
+    datei = "Panzerfaust/"
+else:
+    datei = ""
 
 display = pygame.display.set_mode((display_width,display_height))
 display_rect = display.get_rect()
-floor = pygame.image.load(("floor.png"))
+floor = pygame.image.load((datei+"floor.png"))
 floorRect = floor.get_rect(topleft=(0,820))
 pygame.display.set_caption('TANK')
 clock = pygame.time.Clock()
@@ -27,19 +31,19 @@ font = pygame.font.Font('freesansbold.ttf', 32)
 text1 = font.render(('Du hast verloren!'), True, green, black)
 text1Rect = text1.get_rect()
 text1Rect.center = (600,100)
-deathexplosion4 = pygame.image.load(("deathexplosion.png"))
-deathexplosion5 = pygame.image.load(("deathexplosion1.png"))
-deathexplosion6 = pygame.image.load(("deathexplosion2.png"))
-deathexplosion7 = pygame.image.load(("deathexplosion3.png"))
-deathexplosion3 = pygame.image.load(("deathexplosion4.png"))
-deathexplosion2 = pygame.image.load(("deathexplosion5.png"))
-deathexplosion1 = pygame.image.load(("deathexplosion6.png"))
-tanksprite = pygame.image.load(('sprite1.png'))
-projektil1 = pygame.image.load(("projektil.png"))
-projektil2 = pygame.image.load(("projektile1.png"))
-projektil3 = pygame.image.load(("projektil2.png"))
-projektil4 = pygame.image.load(("projektil3.png"))
-projektil5 = pygame.image.load(("projektil4.png"))
+deathexplosion4 = pygame.image.load((datei+"deathexplosion.png"))
+deathexplosion5 = pygame.image.load((datei+"deathexplosion1.png"))
+deathexplosion6 = pygame.image.load((datei+"deathexplosion2.png"))
+deathexplosion7 = pygame.image.load((datei+"deathexplosion3.png"))
+deathexplosion3 = pygame.image.load((datei+"deathexplosion4.png"))
+deathexplosion2 = pygame.image.load((datei+"deathexplosion5.png"))
+deathexplosion1 = pygame.image.load((datei+"deathexplosion6.png"))
+tanksprite = pygame.image.load((datei+'sprite1.png'))
+projektil1 = pygame.image.load((datei+"projektil.png"))
+projektil2 = pygame.image.load((datei+"projektile1.png"))
+projektil3 = pygame.image.load((datei+"projektil2.png"))
+projektil4 = pygame.image.load((datei+"projektil3.png"))
+projektil5 = pygame.image.load((datei+"projektil4.png"))
 tankwidth = 50
 tankheight = 20
 tankspeed = 5
@@ -550,7 +554,6 @@ player1 = Player1(display_rect, 1)
 player2 = Player2(display_rect, 1)
         
 while player2.levelchanged:
-    print(player2.difficulty)
     globalcounter = 0
     spieleramzug = 1
     player1 = Player1(display_rect, player1.level)
@@ -558,7 +561,7 @@ while player2.levelchanged:
     obstacle = Obstacle()
     player2.levelchanged = False    
     while not player2.levelchanged:
-        background = pygame.image.load(("background.png"))
+        background = pygame.image.load((datei+"background.png"))
         display.blit(background, (0,0))
         display.blit(floor,floorRect)
         obstacle.draw(display)
