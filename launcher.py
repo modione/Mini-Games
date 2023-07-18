@@ -56,12 +56,9 @@ def game_wahl():
         spiel = wahl("Wähle Spiel aus: ", ("Snake", "4 Gewinnt", "Pong", "Panzer Spiel", "Beenden"))
         if spiel == "Snake":
             import games.snake as snake
-
-            thread = threading.Thread(target=snake.game_loop(benutzer))
-            thread.run()
-            os.system()
+            snake.game_loop(benutzer)
         elif spiel == "4 Gewinnt":
-            import games.viergewinnt
+            import viergewinnt.vier
         elif spiel == "Pong":
             import games.pong
         elif spiel == "Panzer Spiel":
